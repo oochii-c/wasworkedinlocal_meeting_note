@@ -17,10 +17,10 @@ export function ProcessingScreen({ meeting, patch, onDone, onBack }: Props) {
 
   // 담당자 붙은 처리 단계 (와이어프레임 기준)
   const steps = [
-    { label: '오디오 준비 완료', owner: '정아', state: meeting.audioFile ? 'done' : 'active' },
-    { label: '텍스트 변환 (STT)', owner: '하은', state: hasText ? 'done' : 'active' },
-    { label: '핵심 요약', owner: '선민', state: hasSummary ? 'done' : hasText ? 'active' : 'idle' },
-    { label: '회의록 준비', owner: '욱진', state: hasText ? 'active' : 'idle' },
+    { label: '오디오 준비 완료', owner: '', state: meeting.audioFile ? 'done' : 'active' },
+    { label: '텍스트 변환 (STT)', owner: '', state: hasText ? 'done' : 'active' },
+    { label: '핵심 요약', owner: '', state: hasSummary ? 'done' : hasText ? 'active' : 'idle' },
+    { label: '회의록 준비', owner: '', state: hasText ? 'active' : 'idle' },
   ] as const
 
   return (
@@ -43,7 +43,7 @@ export function ProcessingScreen({ meeting, patch, onDone, onBack }: Props) {
       </ul>
 
       <div className="proc-work">
-        <p className="worklabel">변환 (하은)</p>
+        <p className="worklabel">변환</p>
         <TranscribePanel
           audioFile={meeting.audioFile}
           onTranscript={(t) => patch({ transcript: t })}
@@ -53,7 +53,7 @@ export function ProcessingScreen({ meeting, patch, onDone, onBack }: Props) {
           onChange={(t) => patch({ transcript: t })}
         />
 
-        <p className="worklabel">요약 (선민)</p>
+        <p className="worklabel">요약</p>
         <SummaryPanel
           transcript={meeting.transcript}
           summary={meeting.summary}

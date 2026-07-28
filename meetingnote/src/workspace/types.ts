@@ -6,8 +6,8 @@ export interface MeetingState {
   title: string
   date: string
   audioFile: File | null // AudioInput가 채움
-  transcript: string // TranscribePanel(STT, 하은)가 채움
-  summary: string // SummaryPanel(요약, 선민)이 채움
+  transcript: string // TranscribePanel(STT)가 채움
+  summary: string // SummaryPanel(요약)이 채움
   actionItems: string[] // 액션 아이템 ("내용 - 담당자")
 }
 
