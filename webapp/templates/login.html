@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <title>로그인 - STT 웹앱</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body class="login-body">
+  <div class="page page-narrow">
+    <form method="post" action="{{ url_for('login') }}" class="card login-card">
+      <span class="logo">STT<span class="caret">▍</span></span>
+      <p class="tagline">🎧 음성을 글로 옮깁니다 <span class="tagline-sub">(STT)</span></p>
+
+      {% if error %}
+      <p class="error">{{ error }}</p>
+      {% endif %}
+
+      <label class="field-label" for="password">비밀번호</label>
+      <div class="field">
+        <input type="password" name="password" id="password" placeholder="비밀번호" required>
+        <button type="button" id="toggle-password" class="icon-btn">👁</button>
+      </div>
+
+      <button type="submit" class="action-row btn-primary">로그인</button>
+    </form>
+  </div>
+
+  <script src="{{ url_for('static', filename='app.js') }}"></script>
+  <script>
+    toggleVisibility("password", "toggle-password");
+  </script>
+</body>
+</html>
