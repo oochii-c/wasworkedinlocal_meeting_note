@@ -1,0 +1,166 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8" />
+<title>회의록 — 화면 와이어프레임</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.css" />
+<style>
+  :root{
+    --ink:#15171C; --ink-2:#1E2128; --paper:#ECEEEB; --surface:#fff;
+    --line:#DFE1DD; --line-strong:#C9CCC6; --text:#23262B; --muted:#868C94;
+    --muted-ink:#9AA0A8; --signal:#E8A33D; --signal-soft:rgba(232,163,61,.14); --rec:#E5484D;
+    --sans:'Pretendard',system-ui,sans-serif; --display:'Space Grotesk',var(--sans); --mono:'JetBrains Mono',monospace;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--paper);color:var(--text);font-family:var(--sans);padding:28px}
+  .head{max-width:1180px;margin:0 auto 22px}
+  .head .eyebrow{font-family:var(--display);font-size:12px;font-weight:600;letter-spacing:.24em;text-transform:uppercase;color:var(--muted);margin:0 0 6px}
+  .head h1{font-family:var(--display);font-weight:600;font-size:30px;letter-spacing:-.02em;margin:0}
+  .head h1 em{font-style:normal;color:var(--signal)}
+  .head p{color:var(--muted);font-size:13.5px;margin:6px 0 0}
+
+  .row{display:grid;grid-template-columns:repeat(3,1fr);gap:22px;max-width:1180px;margin:0 auto;align-items:start}
+  .screen{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:18px;display:flex;flex-direction:column;gap:12px;min-height:560px}
+  .tag{font-family:var(--display);font-size:12px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
+  .tag b{color:var(--signal)}
+
+  .eyebrow-s{font-family:var(--display);font-size:10px;font-weight:600;letter-spacing:.22em;text-transform:uppercase;color:var(--muted)}
+  h2.title{font-family:var(--display);font-weight:600;font-size:22px;letter-spacing:-.02em;margin:2px 0}
+  .titleline{border:none;border-bottom:1.5px solid var(--line-strong);padding:6px 2px;color:var(--muted);font-size:13px}
+  .meta{font-size:11px;color:var(--muted)}
+  .back{font-size:12px;color:var(--muted)}
+
+  .card{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:14px}
+  .console{background:var(--ink);border-color:var(--ink-2);color:#E8EAED;border-radius:14px;padding:16px}
+  .timer{font-family:var(--mono);font-weight:500;font-size:40px;color:#F3F4F6;letter-spacing:.02em;line-height:1;margin:2px 0 12px}
+  .meter{display:flex;align-items:flex-end;gap:3px;height:34px;margin-bottom:14px}
+  .meter i{flex:1;background:linear-gradient(to top,#D64545,#E8A33D);border-radius:2px}
+  .note-ink{color:var(--muted-ink);font-size:11px;margin-top:12px}
+
+  .btn{display:inline-flex;align-items:center;gap:7px;justify-content:center;font-size:13px;font-weight:500;padding:9px 14px;border-radius:9px;border:1px solid var(--line-strong);background:var(--surface);color:var(--text)}
+  .btn.primary{background:var(--ink);border-color:var(--ink);color:#fff}
+  .btn.rec{background:var(--rec);border-color:var(--rec);color:#fff}
+  .btn.ghost-ink{background:transparent;border-color:#3A3E47;color:#E8EAED}
+  .btn.wide{width:100%;padding:12px}
+  .dot{width:9px;height:9px;border-radius:50%;background:var(--rec);display:inline-block}
+
+  .field{border:1px solid var(--line-strong);border-radius:9px;padding:9px 10px;color:var(--muted);font-size:12px;background:var(--surface)}
+  .field.h{min-height:64px}
+  .worklabel{font-family:var(--display);font-size:10px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-top:4px}
+
+  .proc{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:2px}
+  .proc li{display:flex;align-items:center;gap:10px;padding:8px 2px;font-size:13px}
+  .proc .pd{width:10px;height:10px;border-radius:50%;border:1.5px solid var(--line-strong);flex-shrink:0}
+  .proc li.done .pd{background:var(--signal);border-color:var(--signal)}
+  .proc li.active .pd{border-color:var(--signal);box-shadow:0 0 0 3px var(--signal-soft)}
+  .proc .pl{flex:1;color:var(--muted)}
+  .proc li.done .pl,.proc li.active .pl{color:var(--text)}
+  .proc .po{font-family:var(--mono);font-size:11px;color:var(--muted)}
+
+  .tabs{display:flex;gap:2px;border-bottom:1px solid var(--line)}
+  .tabs .t{padding:8px 12px;font-size:12.5px;font-weight:500;color:var(--muted);border-bottom:2px solid transparent;margin-bottom:-1px}
+  .tabs .t.on{color:var(--text);border-bottom-color:var(--signal)}
+  .doc{font-size:12.5px;line-height:1.7;color:var(--text)}
+  .doc .ln{height:7px;background:var(--line-strong);opacity:.5;border-radius:2px;margin:7px 0}
+  .chips{display:flex;flex-wrap:wrap;gap:6px}
+  .chip{font-size:11.5px;padding:5px 9px;background:var(--signal-soft);border-radius:999px;color:var(--text)}
+  .foot{display:flex;gap:8px;margin-top:auto}
+  .foot .btn{flex:1}
+  .spacer{margin-top:auto}
+
+  @page{size:A4 landscape;margin:10mm}
+  @media print{body{padding:0;background:#fff}.row{gap:14px}.screen{box-shadow:none}}
+</style>
+</head>
+<body>
+  <div class="head">
+    <p class="eyebrow">Voice → Document · Wireframe</p>
+    <h1>회의록 — 화면 <em>3단</em> 흐름</h1>
+    <p>현재 구현 디자인 기준. 녹음 → 처리중 → 상세. 잉크/페이퍼 + 시그널 앰버, Space Grotesk / Pretendard.</p>
+  </div>
+
+  <div class="row">
+
+    <!-- ① 녹음 -->
+    <section class="screen">
+      <div class="tag"><b>01</b> · 녹음</div>
+      <div class="eyebrow-s">Voice → Document</div>
+      <h2 class="title">새 회의</h2>
+      <div class="titleline">회의 제목을 입력하세요</div>
+
+      <div class="console">
+        <div class="timer">00:00</div>
+        <div class="meter">
+          <i style="height:20%"></i><i style="height:55%"></i><i style="height:35%"></i><i style="height:80%"></i><i style="height:45%"></i><i style="height:65%"></i><i style="height:30%"></i><i style="height:70%"></i><i style="height:50%"></i><i style="height:25%"></i>
+        </div>
+        <span class="btn rec"><span class="dot"></span> 녹음 시작</span>
+        <div class="note-ink">또는 오디오 파일 드롭 / 업로드</div>
+      </div>
+
+      <span class="btn primary wide spacer">정리 시작 →</span>
+    </section>
+
+    <!-- ② 처리중 -->
+    <section class="screen">
+      <div class="tag"><b>02</b> · 처리중</div>
+      <div class="back">← 녹음으로</div>
+      <h2 class="title">정리하는 중…</h2>
+
+      <ul class="proc">
+        <li class="done"><span class="pd"></span><span class="pl">오디오 준비 완료</span></li>
+        <li class="active"><span class="pd"></span><span class="pl">텍스트 변환 (STT)</span></li>
+        <li><span class="pd"></span><span class="pl">핵심 요약</span></li>
+        <li><span class="pd"></span><span class="pl">회의록 준비</span></li>
+      </ul>
+
+      <div class="worklabel">변환</div>
+      <span class="btn primary">변환 실행</span>
+      <div class="field h">변환된 텍스트…</div>
+
+      <div class="worklabel">요약</div>
+      <span class="btn">요약 생성</span>
+      <div class="field h">요약본…</div>
+
+      <span class="btn primary wide spacer">회의록 보기 →</span>
+    </section>
+
+    <!-- ③ 상세 -->
+    <section class="screen">
+      <div class="tag"><b>03</b> · 회의록 상세</div>
+      <div class="back">← 새 회의</div>
+      <h2 class="title">주간 회의</h2>
+      <div class="meta">2026-07-28 14:00</div>
+
+      <div class="tabs">
+        <span class="t on">요약</span><span class="t">전체 텍스트</span><span class="t">액션 아이템</span>
+      </div>
+
+      <div class="card">
+        <div class="doc">
+          핵심 요약 5줄 이내.
+          <div class="ln" style="width:92%"></div>
+          <div class="ln" style="width:78%"></div>
+          <div class="ln" style="width:85%"></div>
+          <div class="ln" style="width:60%"></div>
+        </div>
+      </div>
+
+      <div class="worklabel">액션 아이템 (요약에서 자동 추출)</div>
+      <div class="chips">
+        <span class="chip">☐ API 명세 초안</span>
+        <span class="chip">☐ 디자인 리뷰</span>
+        <span class="chip">☐ 통합 테스트(금) · 전체</span>
+      </div>
+
+      <div class="foot">
+        <span class="btn">⇩ PDF 다운로드</span>
+        <span class="btn primary">공유</span>
+      </div>
+    </section>
+
+  </div>
+</body>
+</html>
