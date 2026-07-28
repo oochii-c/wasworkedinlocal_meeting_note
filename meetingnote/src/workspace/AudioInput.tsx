@@ -1,14 +1,18 @@
+import Recorder from '../Recorder'
+
 interface Props {
   audioFile: File | null
   onAudio: (file: File) => void
 }
 
-// [STT 동료] 녹음 기능은 여기 확장. 지금은 파일 업로드만.
+// [STT 동료] 녹음(Recorder) + 파일 업로드. 둘 다 onAudio로 오디오 올림.
 export function AudioInput({ audioFile, onAudio }: Props) {
   return (
-    <section>
-      <h2>1. 오디오 입력</h2>
+    <>
+      <Recorder onAudio={onAudio} />
+      <p className="hint">또는 오디오 파일 업로드</p>
       <input
+        className="file-input"
         type="file"
         accept="audio/*"
         onChange={(e) => {
@@ -16,7 +20,7 @@ export function AudioInput({ audioFile, onAudio }: Props) {
           if (f) onAudio(f)
         }}
       />
-      {audioFile ? <p>선택됨: {audioFile.name}</p> : null}
-    </section>
+      {audioFile ? <p className="hint">현재 오디오: {audioFile.name}</p> : null}
+    </>
   )
 }

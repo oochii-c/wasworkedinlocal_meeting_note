@@ -1,0 +1,7 @@
+flask
+flask-cors
+python-dotenv
+openai
+requests
+ollama
+# openai-whisper   # STT_PROVIDER=local 쓸 때만 설치

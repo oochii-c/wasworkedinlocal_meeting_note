@@ -1,25 +1,41 @@
+import { useState } from 'react'
+import { transcribeAudio } from '../lib/api'
+
 interface Props {
   audioFile: File | null
   onTranscript: (text: string) => void
 }
 
-// [STT 동료] audioFile → transcript.
-// TODO: Whisper(@huggingface/transformers) 연결 후 onTranscript(결과) 호출.
+// [STT] audioFile → transcript (Groq Whisper large-v3).
 export function TranscribePanel({ audioFile, onTranscript }: Props) {
+  const [busy, setBusy] = useState(false)
+  const [err, setErr] = useState('')
+
+  const run = async () => {
+    if (!audioFile) return
+    setBusy(true)
+    setErr('')
+    try {
+      onTranscript(await transcribeAudio(audioFile))
+    } catch (e) {
+      setErr(e instanceof Error ? e.message : '변환 실패')
+    } finally {
+      setBusy(false)
+    }
+  }
+
   return (
-    <section>
-      <h2>2. 텍스트 변환 (STT)</h2>
+    <>
       <button
         type="button"
-        disabled={!audioFile}
-        onClick={() => {
-          // TODO(STT): audioFile을 Whisper로 변환하고 결과를 아래로 전달
-          onTranscript('') // placeholder — 구현 시 실제 변환 텍스트
-        }}
+        className="btn btn--primary"
+        disabled={!audioFile || busy}
+        onClick={run}
       >
-        변환 실행
+        {busy ? '변환 중…' : '변환 실행'}
       </button>
-      {!audioFile ? <p>오디오 먼저 선택</p> : null}
-    </section>
+      {!audioFile ? <p className="hint">먼저 오디오를 준비하세요</p> : null}
+      {err ? <p className="err">{err}</p> : null}
+    </>
   )
 }

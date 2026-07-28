@@ -1,32 +1,57 @@
+import { useState } from 'react'
+import { summarize } from '../lib/api'
+
 interface Props {
   transcript: string
   summary: string
   onSummary: (text: string) => void
+  onActionItems: (items: string[]) => void
 }
 
-// [요약 동료] transcript → summary.
-// TODO: 요약 API 연결 후 onSummary(결과) 호출. 그 전엔 수동 입력으로 테스트.
-export function SummaryPanel({ transcript, summary, onSummary }: Props) {
+// [요약] transcript → summary + 액션 아이템 (Groq LLM).
+export function SummaryPanel({
+  transcript,
+  summary,
+  onSummary,
+  onActionItems,
+}: Props) {
+  const [busy, setBusy] = useState(false)
+  const [err, setErr] = useState('')
+
+  const run = async () => {
+    if (!transcript.trim()) return
+    setBusy(true)
+    setErr('')
+    try {
+      const res = await summarize(transcript)
+      onSummary(res.summary)
+      onActionItems(res.actionItems)
+    } catch (e) {
+      setErr(e instanceof Error ? e.message : '요약 실패')
+    } finally {
+      setBusy(false)
+    }
+  }
+
   return (
-    <section>
-      <h2>4. 요약</h2>
+    <>
       <button
         type="button"
-        disabled={!transcript}
-        onClick={() => {
-          // TODO(요약): transcript를 요약 API로 보내고 결과를 전달
-          onSummary('') // placeholder — 구현 시 실제 요약본
-        }}
+        className="btn"
+        disabled={!transcript.trim() || busy}
+        onClick={run}
       >
-        요약 생성
+        {busy ? '요약 중…' : '요약 생성'}
       </button>
+      {err ? <p className="err">{err}</p> : null}
       <textarea
+        className="field"
+        style={{ marginTop: 12 }}
         value={summary}
         onChange={(e) => onSummary(e.target.value)}
         rows={4}
-        placeholder="요약본 (직접 입력도 가능)"
-        style={{ width: '100%' }}
+        placeholder="요약본. 직접 입력할 수도 있어요."
       />
-    </section>
+    </>
   )
 }

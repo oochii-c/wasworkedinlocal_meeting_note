@@ -5,6 +5,8 @@ import type { MeetingExporterProps } from './types'
 export function MeetingPdfExport({ fileName = '회의록', ...data }: MeetingExporterProps) {
   return (
     <PDFDownloadLink
+      className="btn btn--primary"
+      style={{ textDecoration: 'none' }}
       document={<MeetingDocument {...data} />}
       fileName={`${fileName}.pdf`}
     >
