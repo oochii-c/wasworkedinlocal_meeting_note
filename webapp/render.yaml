@@ -2,8 +2,9 @@ services:
   - type: web
     name: stt-webapp
     env: python
-    buildCommand: pip install -r webapp/requirements.txt
-    startCommand: python webapp/app.py
+    rootDir: webapp
+    buildCommand: pip install -r requirements.txt
+    startCommand: gunicorn app:app
     envVars:
       - key: SITE_PASSWORD
         sync: false
