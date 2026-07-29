@@ -389,6 +389,40 @@
   color: var(--text);
 }
 
+/* ── 타이핑 인디케이터 (변환 중 …) ─────────── */
+.typing {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.5rem 0;
+}
+.typing__dot {
+  width: 0.5rem;
+  height: 0.5rem;
+  border-radius: 50%;
+  background: var(--muted);
+  /* 셋이 순차로 한 번씩 튄 뒤 잠깐 쉬고 반복 (겹침 최소화) */
+  animation: typing-bounce 1.5s infinite ease-in-out;
+}
+.typing__dot:nth-child(2) {
+  animation-delay: 0.25s;
+}
+.typing__dot:nth-child(3) {
+  animation-delay: 0.5s;
+}
+@keyframes typing-bounce {
+  0%,
+  40%,
+  100% {
+    transform: translateY(0);
+    opacity: 0.35;
+  }
+  20% {
+    transform: translateY(-0.4rem);
+    opacity: 1;
+  }
+}
+
 /* ── 액션 아이템 ──────────────────────────── */
 .chips {
   display: flex;

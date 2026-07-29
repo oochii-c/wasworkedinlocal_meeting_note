@@ -46,6 +46,7 @@ export function ProcessingScreen({ meeting, patch, onDone, onBack }: Props) {
         <p className="worklabel">변환</p>
         <TranscribePanel
           audioFile={meeting.audioFile}
+          transcript={meeting.transcript}
           onTranscript={(r) => patch({ transcript: r.text, segments: r.segments })}
         />
         <TranscriptView
