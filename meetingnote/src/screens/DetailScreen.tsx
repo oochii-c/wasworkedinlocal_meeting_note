@@ -1,6 +1,17 @@
 import { useState } from 'react'
 import { ActiveExporter } from '../meeting'
 import type { MeetingState } from '../workspace/types'
+import { buildSrt, downloadText } from '../lib/srt'
+
+/** 초 → "MM:SS" (화면 표시용, 시간 단위는 있을 때만) */
+function clock(seconds: number): string {
+  const total = Math.floor(seconds)
+  const h = Math.floor(total / 3600)
+  const m = Math.floor((total % 3600) / 60)
+  const s = total % 60
+  const p2 = (n: number) => String(n).padStart(2, '0')
+  return h > 0 ? `${h}:${p2(m)}:${p2(s)}` : `${m}:${p2(s)}`
+}
 
 interface Props {
   meeting: MeetingState
@@ -59,9 +70,19 @@ export function DetailScreen({ meeting, patch, onNew }: Props) {
         {tab === 'summary' && (
           <p className="doc-text">{meeting.summary || '요약이 아직 없어요.'}</p>
         )}
-        {tab === 'transcript' && (
-          <p className="doc-text">{meeting.transcript || '변환 텍스트가 없어요.'}</p>
-        )}
+        {tab === 'transcript' &&
+          (meeting.segments.length > 0 ? (
+            <ul className="seg-list">
+              {meeting.segments.map((seg, i) => (
+                <li key={i} className="seg-item">
+                  <span className="seg-time">{clock(seg.start)}</span>
+                  <span className="seg-text">{seg.text.trim()}</span>
+                </li>
+              ))}
+            </ul>
+          ) : (
+            <p className="doc-text">{meeting.transcript || '변환 텍스트가 없어요.'}</p>
+          ))}
         {tab === 'actions' && (
           <>
             <div className="chips">
@@ -106,6 +127,31 @@ export function DetailScreen({ meeting, patch, onNew }: Props) {
           summary={meeting.summary}
           fileName={meeting.title || '회의록'}
         />
+        {meeting.segments.length > 0 ? (
+          <button
+            className="btn"
+            onClick={() =>
+              downloadText(
+                `${meeting.title || '회의록'}.srt`,
+                buildSrt(meeting.segments),
+              )
+            }
+          >
+            SRT 저장
+          </button>
+        ) : null}
+        <button
+          className="btn"
+          disabled={!meeting.transcript.trim()}
+          onClick={() =>
+            downloadText(
+              `${meeting.title || '회의록'}.txt`,
+              meeting.transcript.trim() + '\n',
+            )
+          }
+        >
+          TXT 저장
+        </button>
         <button
           className="btn btn--primary"
           onClick={() => {
