@@ -5,7 +5,7 @@ MAX_BYTES = 25 * 1024 * 1024  # Groq/OpenAI 업로드 한도
 
 def _openai_compatible(
     path: str, api_key: str, model: str, base_url: str | None
-) -> str:
+) -> tuple[str, list[dict]]:
     from openai import OpenAI
 
     size = os.path.getsize(path)
@@ -18,8 +18,14 @@ def _openai_compatible(
         else OpenAI(api_key=api_key)
     )
     with open(path, "rb") as f:
-        result = client.audio.transcriptions.create(model=model, file=f, language="ko")
-    return result.text
+        result = client.audio.transcriptions.create(
+            model=model, file=f, language="ko", response_format="verbose_json"
+        )
+    segments = [
+        {"start": seg.start, "end": seg.end, "text": seg.text}
+        for seg in (result.segments or [])
+    ]
+    return result.text, segments
 
 
 _MIME_BY_EXT = {
@@ -33,8 +39,9 @@ _MIME_BY_EXT = {
 }
 
 
-def transcribe(path: str, content_type: str | None = None) -> str:
-    """오디오 파일 → 텍스트. STT_PROVIDER 환경변수로 제공자 선택."""
+def transcribe(path: str, content_type: str | None = None) -> tuple[str, list[dict]]:
+    """오디오 파일 → (텍스트, segments). segments = [{start, end, text}].
+    STT_PROVIDER 환경변수로 제공자 선택. hf는 타임스탬프 미지원 → segments=[]."""
     provider = os.environ.get("STT_PROVIDER", "groq")
 
     if provider == "groq":
@@ -78,7 +85,8 @@ def transcribe(path: str, content_type: str | None = None) -> str:
                 if res.status_code != 200:
                     raise ValueError(f"HF STT 실패 ({res.status_code}): {res.text}")
                 out = res.json()
-                return out.get("text", "") if isinstance(out, dict) else str(out)
+                text = out.get("text", "") if isinstance(out, dict) else str(out)
+                return text, []  # HF inference API는 segment 타임스탬프 미제공
             except requests.exceptions.ReadTimeout as e:
                 last_err = e
         raise ValueError(
@@ -90,4 +98,9 @@ def transcribe(path: str, content_type: str | None = None) -> str:
     import whisper
 
     model = whisper.load_model(os.environ.get("LOCAL_WHISPER_MODEL", "base"))
-    return model.transcribe(path)["text"]
+    result = model.transcribe(path)
+    segments = [
+        {"start": seg["start"], "end": seg["end"], "text": seg["text"]}
+        for seg in result["segments"]
+    ]
+    return result["text"], segments

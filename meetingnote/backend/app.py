@@ -26,7 +26,8 @@ def transcribe_route():
         path = tmp.name
 
     try:
-        return jsonify({"text": transcribe(path, upload.mimetype)})
+        text, segments = transcribe(path, upload.mimetype)
+        return jsonify({"text": text, "segments": segments})
     except Exception as e:
         return jsonify({"error": str(e)}), 500
     finally:
