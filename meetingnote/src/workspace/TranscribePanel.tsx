@@ -1,9 +1,9 @@
 import { useState } from 'react'
-import { transcribeAudio } from '../lib/api'
+import { transcribeAudio, type TranscribeResult } from '../lib/api'
 
 interface Props {
   audioFile: File | null
-  onTranscript: (text: string) => void
+  onTranscript: (result: TranscribeResult) => void
 }
 
 // [STT] audioFile → transcript (Groq Whisper large-v3).
