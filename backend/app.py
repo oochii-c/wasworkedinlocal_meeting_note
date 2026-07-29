@@ -48,4 +48,9 @@ def summarize_route():
 
 
 if __name__ == "__main__":
-    app.run(port=int(os.environ.get("PORT", 5000)), debug=True)
+    # HOST=0.0.0.0 로 띄우면 같은 네트워크(LAN)의 다른 기기에서 접속 가능
+    app.run(
+        host=os.environ.get("HOST", "127.0.0.1"),
+        port=int(os.environ.get("PORT", 5000)),
+        debug=True,
+    )
