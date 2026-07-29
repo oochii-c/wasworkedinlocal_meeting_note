@@ -423,6 +423,16 @@
   }
 }
 
+/* ── 요약 진행 표시 ─────────────────────────── */
+.summary-progress {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+.summary-progress .hint {
+  margin: 0;
+}
+
 /* ── 액션 아이템 ──────────────────────────── */
 .chips {
   display: flex;
