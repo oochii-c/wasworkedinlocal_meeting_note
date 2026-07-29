@@ -16,7 +16,7 @@ export function RecordScreen({ meeting, patch, onNext }: Props) {
       <header className="masthead">
         <p className="eyebrow">Voice → Document</p>
         <h1>
-          새 <em>회의</em>
+          meeting_<em>note</em>
         </h1>
         <input
           className="title-field"
