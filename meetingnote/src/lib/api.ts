@@ -8,14 +8,29 @@ async function readError(res: Response): Promise<string> {
   return data?.error ?? `요청 실패 (${res.status})`
 }
 
-/** 오디오 파일 → 텍스트 */
-export async function transcribeAudio(file: File): Promise<string> {
+/** transcript 한 구간 (초 단위 시작/끝 + 텍스트) */
+export interface TranscriptSegment {
+  start: number
+  end: number
+  text: string
+}
+
+export interface TranscribeResult {
+  text: string
+  segments: TranscriptSegment[]
+}
+
+/** 오디오 파일 → 텍스트 + 타임스탬프 segments (제공자에 따라 segments 비어있을 수 있음) */
+export async function transcribeAudio(file: File): Promise<TranscribeResult> {
   const form = new FormData()
   form.append('file', file)
   const res = await fetch(`${BASE}/transcribe`, { method: 'POST', body: form })
   if (!res.ok) throw new Error(await readError(res))
   const data = await res.json()
-  return (data.text ?? '').trim()
+  return {
+    text: (data.text ?? '').trim(),
+    segments: Array.isArray(data.segments) ? data.segments : [],
+  }
 }
 
 export interface SummaryResult {
